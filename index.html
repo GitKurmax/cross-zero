@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="author" content="Alexandr Kurmoiarov"/>
+	<title>Игра "Крестики-нолики"</title>
+	<style type="text/css">
+		body {
+			text-align: center;
+		}
+		
+		table, tr, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+			margin:auto;
+		}
+
+		td {
+			width: 50px;
+			height: 50px;
+			text-align: center;
+			font-size: 30px;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>Игра "Крестики-нолики"</h1>
+	<input type="button" name="" id="refresh" value = 'Начать заново'>
+	<p id="res">Результат: </p>
+	<script>
+		var table = document.createElement('table');
+		var button = document.querySelector('#refresh');
+		var p = document.querySelector('#res');
+
+		createTable();
+		addEventToTd();
+		refresh();
+
+		function createTable(){
+			document.body.appendChild(table);
+		
+			for (var i = 0; i < 3; i++) {
+				var tr = document.createElement('tr');
+				
+				table.appendChild(tr);
+				for (var j = 0; j < 3; j++) {
+					var td = document.createElement('td');
+			
+					tr.appendChild(td);
+				}
+			}
+		}
+		
+		function addEventToTd(){
+			var table = document.getElementsByTagName('table');
+			var sign = 'X';
+			 table[0].addEventListener('click',function fill(){
+			 	if(!event.target.innerHTML){
+			 		if(sign == 'X'){
+						event.target.innerHTML = sign;
+						sign = 'O';
+					}else{
+						event.target.innerHTML = sign;
+						sign = 'X';
+					}
+				}
+				if(check()){
+					removeEvent(table[0],fill);
+					p.innerHTML += 'победили ' + winner() + '.';
+					return null;
+				}
+
+				if(!deadHeat()){
+					removeEvent(table[0],fill);
+					p.innerHTML += 'Ничья!';
+				};
+			});
+		}
+
+		function check(){
+			if(ifEquals(0,1,2)){
+				return ifEquals(0,1,2);
+			}
+			if(ifEquals(0,3,6)){
+				return ifEquals(0,3,6);
+			}
+			if(ifEquals(0,4,8)){
+				return ifEquals(0,4,8);
+			}
+			if(ifEquals(1,4,7)){
+				return ifEquals(1,4,7);
+			}
+			if(ifEquals(3,4,5)){
+				return ifEquals(3,4,5);
+			}
+			if(ifEquals(2,5,8)){
+				return ifEquals(2,5,8);
+			}
+			if(ifEquals(6,7,8)){
+				return ifEquals(6,7,8);
+			}
+			if(ifEquals(2,4,6)){
+				return ifEquals(2,4,6);
+			}
+			return false;
+		}
+
+		function ifEquals(a,b,c){
+			var td = table.getElementsByTagName('td');
+
+			if(td[a].innerHTML == td[b].innerHTML && td[a].innerHTML == td[c].innerHTML&&td[a].innerHTML!=0 ){
+				td[a].style.color = 'red';
+				td[b].style.color = 'red';
+				td[c].style.color = 'red';
+				td[a].setAttribute('id','win');
+
+				return true;
+			}
+		}
+
+		function refresh(){
+			var td = table.getElementsByTagName('td');
+
+			button.disabled = true;
+			button.addEventListener('click', function(){
+				p.innerHTML = 'Результат: ';
+				button.disabled = true;
+				for (var i = 0; i < td.length; i++) {
+					td[i].innerHTML = '';
+					td[i].style.color = 'black';
+					if(td[i].hasAttribute('id')){
+						td[i].removeAttribute('id');
+					}
+				}
+				addEventToTd();
+			});
+		}
+
+		function removeEvent(elem,func){
+			elem.removeEventListener('click',func);
+			button.disabled = false;
+		}
+
+		function deadHeat(){
+			var td = table.getElementsByTagName('td');
+			for (var i = 0; i < td.length; i++) {
+				if(td[i].innerHTML == ''){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function winner(){
+			var elem = document.getElementById('win');
+			if(elem.innerHTML == 'X'){
+				return 'крестики';
+			}else{
+				return 'нолики';
+			}
+		}
+	</script>
+</body>
+</html>
